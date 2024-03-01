@@ -1,0 +1,20 @@
+GET http://localhost:3333/contacts/
+###
+
+GET http://localhost:3333/contacts/57c1c712-ccc3-4570-87f4-bf887b023de2
+###
+
+DELETE http://localhost:3333/contacts/57c1c712-ccc3-4570-87f4-bf887b023de2
+###
+
+POST http://localhost:3333/contacts
+Content-Type: : application/json
+
+{
+  "name": "Silva",
+  "email": "silva@exemple.com",
+  "phone": "111111111",
+  "category_id": "djad-adwdawdwa-dawdawdaw-dwadwdad-wad"
+}
+
+###

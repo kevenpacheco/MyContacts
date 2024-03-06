@@ -1,5 +1,12 @@
+import { ContactForm } from '../../components/ContactForm';
+import { PageHeader } from '../../components/PageHeader';
+
 export function EditContact() {
   return (
-    <div>EditContact</div>
+    <>
+      <PageHeader title="Editar Keven Pacheco" />
+
+      <ContactForm buttonLabel="Salvar alterações" />
+    </>
   );
 }

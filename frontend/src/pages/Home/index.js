@@ -15,7 +15,7 @@ export function Home() {
 
       <Header>
         <strong>3 contatos</strong>
-        <a href="/">Novo contato</a>
+        <a href="/new">Novo contato</a>
       </Header>
 
       <ListContainer>
@@ -37,7 +37,7 @@ export function Home() {
           </div>
 
           <div className="actions">
-            <a href="/">
+            <a href="/edit/1">
               <img src={edit} alt="Edit" />
             </a>
             <button type="button">

@@ -51,7 +51,7 @@ export function ContactForm({ buttonLabel }) {
   }
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit} noValidate>
       <FormGroup error={getErrorMessageByFieldName('name')}>
         <Input
           type="text"
@@ -64,7 +64,7 @@ export function ContactForm({ buttonLabel }) {
 
       <FormGroup error={getErrorMessageByFieldName('email')}>
         <Input
-          type="text"
+          type="email"
           placeholder="E-mail"
           value={email}
           onChange={handleEmailChange}
@@ -74,7 +74,7 @@ export function ContactForm({ buttonLabel }) {
 
       <FormGroup>
         <Input
-          type="text"
+          type="tel"
           placeholder="Telefone"
           value={phone}
           onChange={(event) => setPhone(event.target.value)}

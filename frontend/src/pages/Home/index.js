@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import {
-  Card, Container, Header, InputSearchContainer, ListContainer,
+  Card,
+  Container,
+  Header,
+  InputSearchContainer,
+  ListContainer,
 } from './styles';
 
 import arrow from '../../assets/images/icons/arrow.svg';
@@ -19,8 +23,6 @@ export function Home() {
       .catch((err) => console.log('err -> ', err));
   }, []);
 
-  console.log('contacts -> ', contacts);
-
   return (
     <Container>
       <InputSearchContainer>
@@ -28,7 +30,10 @@ export function Home() {
       </InputSearchContainer>
 
       <Header>
-        <strong>3 contatos</strong>
+        <strong>
+          {contacts.length}
+          {contacts.length === 1 ? ' contato' : ' contatos'}
+        </strong>
         <a href="/new">Novo contato</a>
       </Header>
 
@@ -40,25 +45,29 @@ export function Home() {
           </button>
         </header>
 
-        <Card>
-          <div className="info">
-            <div className="contact-name">
-              <strong>Keven Pacheco</strong>
-              <small>instagram</small>
+        {contacts.map((contact) => (
+          <Card key={contact.id}>
+            <div className="info">
+              <div className="contact-name">
+                <strong>{contact.name}</strong>
+                {contact.category_name && (
+                  <small>{contact.category_name}</small>
+                )}
+              </div>
+              <span>{contact.email}</span>
+              <span>{contact.phone}</span>
             </div>
-            <span>kevenpacheco2000@gmail.com</span>
-            <span>(31) 99999-9999</span>
-          </div>
 
-          <div className="actions">
-            <a href="/edit/1">
-              <img src={edit} alt="Edit" />
-            </a>
-            <button type="button">
-              <img src={trash} alt="Delete" />
-            </button>
-          </div>
-        </Card>
+            <div className="actions">
+              <a href={`/edit/${contact.id}`}>
+                <img src={edit} alt="Edit" />
+              </a>
+              <button type="button">
+                <img src={trash} alt="Delete" />
+              </button>
+            </div>
+          </Card>
+        ))}
       </ListContainer>
     </Container>
   );

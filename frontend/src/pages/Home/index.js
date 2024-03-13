@@ -7,14 +7,19 @@ import {
   ListHeader,
 } from './styles';
 
+import { Loader } from '../../components/Loader';
+
 import arrow from '../../assets/images/icons/arrow.svg';
 import edit from '../../assets/images/icons/edit.svg';
 import trash from '../../assets/images/icons/trash.svg';
+
+import { delay } from '../../utils/delay';
 
 export function Home() {
   const [contacts, setContacts] = useState([]);
   const [orderBy, setOrderBy] = useState('asc');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const filteredContacts = useMemo(
     () => contacts.filter((contact) => (
@@ -24,12 +29,21 @@ export function Home() {
   );
 
   useEffect(() => {
+    setIsLoading(true);
+
     fetch(`http://localhost:3333/contacts?orderBy=${orderBy}`)
       .then(async (response) => {
+        await delay(2000);
+
         const json = await response.json();
         setContacts(json);
       })
-      .catch((err) => console.log('err -> ', err));
+      .catch((err) => {
+        console.log('err -> ', err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [orderBy]);
 
   function handleToggleOrderBy() {
@@ -42,6 +56,8 @@ export function Home() {
 
   return (
     <Container>
+      <Loader isLoading={isLoading} />
+
       <InputSearchContainer>
         <input
           type="text"

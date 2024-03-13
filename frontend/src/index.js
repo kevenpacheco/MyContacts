@@ -9,6 +9,11 @@ ReactDOM.render(
   document.getElementById('root'),
 );
 
-fetch('http://localhost:3333/contacts')
+fetch('http://localhost:3333/contacts', {
+  method: 'GET',
+  headers: new Headers({
+    'X-App-Id': '123',
+  }),
+})
   .then((response) => console.log('response -> ', response))
   .catch((err) => console.log('err -> ', err));

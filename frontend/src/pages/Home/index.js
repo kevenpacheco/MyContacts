@@ -29,21 +29,24 @@ export function Home() {
   );
 
   useEffect(() => {
-    setIsLoading(true);
+    async function loadContacts() {
+      try {
+        setIsLoading(true);
 
-    fetch(`http://localhost:3333/contacts?orderBy=${orderBy}`)
-      .then(async (response) => {
+        const response = await fetch(`http://localhost:3333/contacts?orderBy=${orderBy}`);
+
         await delay(2000);
 
         const json = await response.json();
         setContacts(json);
-      })
-      .catch((err) => {
-        console.log('err -> ', err);
-      })
-      .finally(() => {
+      } catch (error) {
+        console.log('error -> ', error);
+      } finally {
         setIsLoading(false);
-      });
+      }
+    }
+
+    loadContacts();
   }, [orderBy]);
 
   function handleToggleOrderBy() {

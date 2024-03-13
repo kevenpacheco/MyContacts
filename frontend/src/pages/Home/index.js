@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   Card, Container, Header, InputSearchContainer, ListContainer,
 } from './styles';
@@ -5,13 +6,23 @@ import {
 import arrow from '../../assets/images/icons/arrow.svg';
 import edit from '../../assets/images/icons/edit.svg';
 import trash from '../../assets/images/icons/trash.svg';
-import { Loader } from '../../components/Loader';
 
 export function Home() {
+  const [contacts, setContacts] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:3333/contacts')
+      .then(async (response) => {
+        const json = await response.json();
+        setContacts(json);
+      })
+      .catch((err) => console.log('err -> ', err));
+  }, []);
+
+  console.log('contacts -> ', contacts);
+
   return (
     <Container>
-      <Loader />
-
       <InputSearchContainer>
         <input type="text" placeholder="Pesquise pelo nome" />
       </InputSearchContainer>

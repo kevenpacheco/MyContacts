@@ -13,11 +13,10 @@ class ContactController {
     const contact = await ContactsRepository.findById(id);
 
     if (!contact) {
-      response.sendStatus(404);
-      return;
+      return response.sendStatus(404).json({ error: 'Contact not found' });
     }
 
-    response.json(contact);
+    return response.json(contact);
   }
 
   async store(request, response) {
@@ -26,22 +25,19 @@ class ContactController {
     } = request.body;
 
     if (!name) {
-      response.status(400).json({ error: 'Name is required' });
-      return;
+      return response.status(400).json({ error: 'Name is required' });
     }
 
     const contactExists = await ContactsRepository.findByEmail(email);
-
     if (contactExists) {
-      response.status(400).json({ error: 'This e-mail is already in use' });
-      return;
+      return response.status(400).json({ error: 'This e-mail is already in use' });
     }
 
     const contact = await ContactsRepository.create({
       name, email, phone, category_id,
     });
 
-    response.status(201).json(contact);
+    return response.status(201).json(contact);
   }
 
   async update(request, response) {
@@ -52,26 +48,23 @@ class ContactController {
 
     const contactExists = await ContactsRepository.findById(id);
     if (!contactExists) {
-      response.sendStatus(404);
-      return;
+      return response.sendStatus(404).json({ error: 'Contact not found' });
     }
 
     if (!name) {
-      response.status(400).json({ error: 'Name is required' });
-      return;
+      return response.status(400).json({ error: 'Name is required' });
     }
 
     const contactByEmail = await ContactsRepository.findByEmail(email);
     if (contactByEmail && contactByEmail.id !== id) {
-      response.status(400).json({ error: 'This e-mail is already in use' });
-      return;
+      return response.status(400).json({ error: 'This e-mail is already in use' });
     }
 
     const contact = await ContactsRepository.update(id, {
       name, email, phone, category_id,
     });
 
-    response.json(contact);
+    return response.json(contact);
   }
 
   async delete(request, response) {

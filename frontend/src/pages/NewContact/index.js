@@ -9,7 +9,7 @@ export function NewContact() {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        category_id: formData.categoryId || null,
+        category_id: formData.categoryId,
       };
 
       const response = await ContactsService.createContact(contact);

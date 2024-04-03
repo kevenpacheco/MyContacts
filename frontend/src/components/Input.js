@@ -22,4 +22,9 @@ export const Input = styled.input`
       color: ${theme.colors.danger.main};
       border-color: ${theme.colors.danger.main} !important;
     `}
+
+  &[disabled] {
+    background-color: ${({ theme }) => theme.colors.gray[100]};
+    border-color: ${({ theme }) => theme.colors.gray[200]};
+  }
 `;

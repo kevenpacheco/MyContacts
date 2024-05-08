@@ -20,17 +20,36 @@ export default class EventManager {
       listener(payload);
     });
   }
+
+  removeListener(event, listenerToRemove) {
+    if (!this.listeners[event]) {
+      return;
+    }
+
+    const filteredListeners = this.listeners[event].filter(
+      (listener) => listener !== listenerToRemove,
+    );
+
+    this.listeners[event] = filteredListeners;
+  }
 }
 
 const toastEventManager = new EventManager();
 
-toastEventManager.on('addtoast', (payload) => {
+function addtoast1(payload) {
   console.log('addtoast listener1', payload);
-});
-toastEventManager.on('addtoast', (payload) => {
-  console.log('addtoast listener2', payload);
-});
+}
 
+function addtoast2(payload) {
+  console.log('addtoast listener2', payload);
+}
+
+toastEventManager.on('addtoast', addtoast1);
+toastEventManager.on('addtoast', addtoast2);
 toastEventManager.emit('addtoast', { type: 'danger', text: 'Opaa' });
+
+toastEventManager.removeListener('addtoast', addtoast1);
+
+toastEventManager.emit('addtoast', 'depois da remoção...');
 
 console.log({ toastEventManager });

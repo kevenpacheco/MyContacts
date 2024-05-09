@@ -1,5 +1,5 @@
 import { useParams, useHistory } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ContactForm } from '../../components/ContactForm';
 import { PageHeader } from '../../components/PageHeader';
 import { Loader } from '../../components/Loader';
@@ -8,6 +8,7 @@ import ContactsService from '../../services/ContactsService';
 
 export function EditContact() {
   const [isLoading, setIsLoading] = useState(true);
+  const contactFormRef = useRef(null);
 
   const { id } = useParams();
   const history = useHistory();
@@ -17,7 +18,7 @@ export function EditContact() {
       try {
         const contactData = await ContactsService.getContactById(id);
 
-        console.log(contactData);
+        contactFormRef.current.setFieldValues(contactData);
 
         setIsLoading(false);
       } catch (error) {
@@ -43,6 +44,7 @@ export function EditContact() {
       <PageHeader title="Editar Keven Pacheco" />
 
       <ContactForm
+        ref={contactFormRef}
         buttonLabel="Salvar alterações"
         onSubmit={handleSubmit}
       />

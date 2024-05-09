@@ -33,10 +33,10 @@ export const ContactForm = forwardRef(({ buttonLabel, onSubmit }, ref) => {
 
   useImperativeHandle(ref, () => ({
     setFieldValues: (contact) => {
-      setName(contact.name);
-      setEmail(contact.email);
-      setPhone(contact.phone);
-      setCategoryId(contact.category_id);
+      setName(contact.name ?? '');
+      setEmail(contact.email ?? '');
+      setPhone(contact.phone ?? '');
+      setCategoryId(contact.category_id ?? '');
     },
   }));
 
@@ -134,7 +134,7 @@ export const ContactForm = forwardRef(({ buttonLabel, onSubmit }, ref) => {
 
       <FormGroup isLoading={isLoadingCategories}>
         <Select
-          value={categoryId || ''}
+          value={categoryId}
           onChange={(event) => setCategoryId(event.target.value)}
           disabled={isLoadingCategories || isSubmitting}
         >

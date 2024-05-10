@@ -20,6 +20,13 @@ export class HttpClient {
     });
   }
 
+  put(path, body) {
+    return this.makeRequest(path, {
+      method: 'PUT',
+      body,
+    });
+  }
+
   async makeRequest(path, options) {
     await delay(500);
 

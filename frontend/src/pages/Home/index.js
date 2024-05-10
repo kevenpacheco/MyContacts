@@ -33,6 +33,8 @@ export function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [contactBeingDeleted, setContactBeingDeleted] = useState(null);
 
   const filteredContacts = useMemo(
     () => contacts.filter(
@@ -45,9 +47,7 @@ export function Home() {
     try {
       setIsLoading(true);
 
-      const contactsList = await ContactsService.listContacts(
-        orderBy,
-      );
+      const contactsList = await ContactsService.listContacts(orderBy);
 
       setHasError(false);
       setContacts(contactsList);
@@ -74,18 +74,32 @@ export function Home() {
     loadContacts();
   }
 
+  function handleDeleteContact(contact) {
+    setIsDeleteModalVisible(true);
+    setContactBeingDeleted(contact);
+  }
+
+  function handleCloseDeleteModal() {
+    setIsDeleteModalVisible(false);
+  }
+
+  function handleConfirmDeleteContact() {
+    console.log(contactBeingDeleted.id);
+  }
+
   return (
     <Container>
       <Loader isLoading={isLoading} />
 
       <Modal
-        title='Tem certeza que deseja remover o contato "Keven Pacheco"?'
+        title={`Tem certeza que deseja remover o contato "${contactBeingDeleted?.name}"?`}
         danger
+        visible={isDeleteModalVisible}
         confirmLabel="Deletar"
-        onCancel={() => alert('CANCELOU!')}
-        onConfirm={() => alert('CONFIRMOU!')}
+        onCancel={handleCloseDeleteModal}
+        onConfirm={handleConfirmDeleteContact}
       >
-        <h1>opa</h1>
+        <p>Esta ação não poderá ser desfeita!</p>
       </Modal>
 
       {contacts.length > 0 && (
@@ -122,9 +136,7 @@ export function Home() {
           <img src={sad} alt="Sad" />
 
           <div className="details">
-            <strong>
-              Ocorreu um erro ao obter os seus contatos!
-            </strong>
+            <strong>Ocorreu um erro ao obter os seus contatos!</strong>
 
             <Button onClick={handleTryAgain}>Tentar novamente</Button>
           </div>
@@ -138,9 +150,9 @@ export function Home() {
               <img src={emptyBox} alt="Empty box" />
 
               <p>
-                Você ainda não tem nenhum contato cadastrado! Clique
-                no botão <strong>”Novo contato”</strong> à cima para
-                cadastrar o seu primeiro!
+                Você ainda não tem nenhum contato cadastrado! Clique no botão{' '}
+                <strong>”Novo contato”</strong> à cima para cadastrar o seu
+                primeiro!
               </p>
             </EmptyListContainer>
           )}
@@ -182,7 +194,10 @@ export function Home() {
                 <a href={`/edit/${contact.id}`}>
                   <img src={edit} alt="Edit" />
                 </a>
-                <button type="button">
+                <button
+                  type="button"
+                  onClick={() => handleDeleteContact(contact)}
+                >
                   <img src={trash} alt="Delete" />
                 </button>
               </div>

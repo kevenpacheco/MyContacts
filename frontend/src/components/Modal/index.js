@@ -5,19 +5,28 @@ import { Button } from '../Button';
 
 import { Container, Footer, Overlay } from './styles';
 
-export function Modal({ danger }) {
+export function Modal({
+  danger,
+  title,
+  children,
+  cancelLabel,
+  confirmLabel,
+  onCancel,
+  onConfirm,
+}) {
   return ReactDOM.createPortal(
     <Overlay>
       <Container danger={danger}>
-        <h1>Título do modal</h1>
-        <p>Corpo do modal</p>
+        <h1>{title}</h1>
+
+        <div className="modal-body">{children}</div>
 
         <Footer>
-          <button type="button" className="cancel-button">
-            Cancelar
+          <button type="button" className="cancel-button" onClick={onCancel}>
+            {cancelLabel}
           </button>
-          <Button type="button" danger={danger}>
-            Deletar
+          <Button type="button" danger={danger} onClick={onConfirm}>
+            {confirmLabel}
           </Button>
         </Footer>
       </Container>
@@ -28,8 +37,16 @@ export function Modal({ danger }) {
 
 Modal.propTypes = {
   danger: PropTypes.bool,
+  title: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+  cancelLabel: PropTypes.string,
+  confirmLabel: PropTypes.string,
+  onCancel: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired,
 };
 
 Modal.defaultProps = {
   danger: false,
+  cancelLabel: 'Cancelar',
+  confirmLabel: 'Confirmar',
 };

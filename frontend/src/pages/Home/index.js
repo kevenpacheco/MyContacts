@@ -16,6 +16,7 @@ import {
 
 import { Button } from '../../components/Button';
 import { Loader } from '../../components/Loader';
+import { Modal } from '../../components/Modal';
 
 import arrow from '../../assets/images/icons/arrow.svg';
 import edit from '../../assets/images/icons/edit.svg';
@@ -34,9 +35,9 @@ export function Home() {
   const [hasError, setHasError] = useState(false);
 
   const filteredContacts = useMemo(
-    () => contacts.filter((contact) => (
-      contact.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )),
+    () => contacts.filter(
+      (contact) => contact.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    ),
     [contacts, searchTerm],
   );
 
@@ -44,7 +45,9 @@ export function Home() {
     try {
       setIsLoading(true);
 
-      const contactsList = await ContactsService.listContacts(orderBy);
+      const contactsList = await ContactsService.listContacts(
+        orderBy,
+      );
 
       setHasError(false);
       setContacts(contactsList);
@@ -74,6 +77,16 @@ export function Home() {
   return (
     <Container>
       <Loader isLoading={isLoading} />
+
+      <Modal
+        title='Tem certeza que deseja remover o contato "Keven Pacheco"?'
+        danger
+        confirmLabel="Deletar"
+        onCancel={() => alert('CANCELOU!')}
+        onConfirm={() => alert('CONFIRMOU!')}
+      >
+        <h1>opa</h1>
+      </Modal>
 
       {contacts.length > 0 && (
         <InputSearchContainer>
@@ -109,7 +122,9 @@ export function Home() {
           <img src={sad} alt="Sad" />
 
           <div className="details">
-            <strong>Ocorreu um erro ao obter os seus contatos!</strong>
+            <strong>
+              Ocorreu um erro ao obter os seus contatos!
+            </strong>
 
             <Button onClick={handleTryAgain}>Tentar novamente</Button>
           </div>
@@ -118,24 +133,25 @@ export function Home() {
 
       {!hasError && (
         <>
-          {(contacts.length < 1 && !isLoading) && (
+          {contacts.length < 1 && !isLoading && (
             <EmptyListContainer>
               <img src={emptyBox} alt="Empty box" />
 
               <p>
-                Você ainda não tem nenhum contato cadastrado!
-                Clique no botão <strong>”Novo contato”</strong> à cima
-                para cadastrar o seu primeiro!
+                Você ainda não tem nenhum contato cadastrado! Clique
+                no botão <strong>”Novo contato”</strong> à cima para
+                cadastrar o seu primeiro!
               </p>
             </EmptyListContainer>
           )}
 
-          {(contacts.length > 0 && filteredContacts.length < 1) && (
+          {contacts.length > 0 && filteredContacts.length < 1 && (
             <SearchNotFoundContainer>
               <img src={magnifierQuestion} alt="Magnifier question" />
 
               <span>
-                Nenhum resultado foi encontrado para <strong>{searchTerm}</strong>
+                Nenhum resultado foi encontrado para{' '}
+                <strong>{searchTerm}</strong>
               </span>
             </SearchNotFoundContainer>
           )}

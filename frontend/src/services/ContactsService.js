@@ -7,20 +7,26 @@ class ContactsService {
   }
 
   async listContacts(orderBy = 'asc') {
-    return this.httpClient.get(`/contacts?orderBy=${orderBy}`);
+    const contacts = await this.httpClient.get(`/contacts?orderBy=${orderBy}`);
+
+    return contacts.map(ContactMapper.toDomain);
   }
 
   async getContactById(id) {
-    return this.httpClient.get(`/contacts/${id}`);
+    const contact = await this.httpClient.get(`/contacts/${id}`);
+
+    return ContactMapper.toDomain(contact);
   }
 
   async createContact(contact) {
     const body = ContactMapper.toPersistence(contact);
+
     return this.httpClient.post('/contacts', body);
   }
 
   async updateContact(id, contact) {
     const body = ContactMapper.toPersistence(contact);
+
     return this.httpClient.put(`/contacts/${id}`, body);
   }
 

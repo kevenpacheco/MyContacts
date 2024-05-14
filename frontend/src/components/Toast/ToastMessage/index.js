@@ -1,11 +1,15 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { Container } from './styles';
 
 import xCircleIcon from '../../../assets/images/icons/x-circle.svg';
 import checkCircleIcon from '../../../assets/images/icons/check-circle.svg';
+import { useAnimatedUnmount } from '../../../hooks/useAnimatedUnmount';
 
-export function ToastMessage({ message, onRemoveMessage }) {
+import { Container } from './styles';
+
+export function ToastMessage({ message, onRemoveMessage, isLeaving }) {
+  const { animatedElementRef, shouldRender } = useAnimatedUnmount(!isLeaving);
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       onRemoveMessage(message.id);
@@ -20,12 +24,18 @@ export function ToastMessage({ message, onRemoveMessage }) {
     onRemoveMessage(message.id);
   }
 
+  if (!shouldRender) {
+    return null;
+  }
+
   return (
     <Container
       type={message.type}
       onClick={handleRemove}
       tabIndex={0}
       role="button"
+      ref={animatedElementRef}
+      isLeaving={isLeaving}
     >
       {message.type === 'danger' && <img src={xCircleIcon} alt="X" />}
       {message.type === 'success' && <img src={checkCircleIcon} alt="Check" />}
@@ -42,4 +52,5 @@ ToastMessage.propTypes = {
     duration: PropTypes.number,
   }).isRequired,
   onRemoveMessage: PropTypes.func.isRequired,
+  isLeaving: PropTypes.bool.isRequired,
 };

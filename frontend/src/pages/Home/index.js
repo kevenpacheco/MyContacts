@@ -63,7 +63,7 @@ export function Home() {
           />
 
           <Modal
-            title={`Tem certeza que deseja remover o contato "${contactBeingDeleted?.name}"?`}
+            title={`Tem certeza que deseja remover o contato ”${contactBeingDeleted?.name}”?`}
             danger
             visible={isDeleteModalVisible}
             isLoading={isLoadingDelete}

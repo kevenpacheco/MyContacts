@@ -1,18 +1,27 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { ToastMessage } from '../ToastMessage';
 import { Container } from './styles';
 import { toastEventManager } from '../../../utils/toast';
+import { useAnimatedList } from '../../../hooks/useAnimatedList';
 
 export function ToastContainer() {
-  const [messages, setMessages] = useState([]);
-  const [pendingRemovalMessageIds, setPendingRemovalMessageIds] = useState([]);
+  const {
+    items: messages,
+    setItems: setMessages,
+    pendingRemovalItemIds,
+    handleAnimationEnd,
+    handleRemoveMessage,
+  } = useAnimatedList();
 
   useEffect(() => {
     function handleAddToast({ type, text, duration }) {
       setMessages((prevState) => [
         ...prevState,
         {
-          id: Math.random(), type, text, duration,
+          id: Math.random(),
+          type,
+          text,
+          duration,
         },
       ]);
     }
@@ -22,24 +31,9 @@ export function ToastContainer() {
     return () => {
       toastEventManager.removeListener('addtoast', handleAddToast);
     };
-  }, []);
+  }, [setMessages]);
 
-  const handleRemoveMessage = useCallback((id) => {
-    setPendingRemovalMessageIds(
-      (prevState) => [...prevState, id],
-    );
-  }, []);
-
-  const handleAnimationEnd = useCallback((id) => {
-    setMessages(
-      (prevState) => prevState.filter((message) => message.id !== id),
-    );
-    setPendingRemovalMessageIds(
-      (prevState) => prevState.filter((messageId) => messageId !== id),
-    );
-  }, []);
-
-  console.log({ messages, pendingRemovalMessageIds });
+  console.log({ messages, pendingRemovalItemIds });
 
   return (
     <Container>
@@ -48,7 +42,7 @@ export function ToastContainer() {
           key={message.id}
           message={message}
           onRemoveMessage={handleRemoveMessage}
-          isLeaving={pendingRemovalMessageIds.includes(message.id)}
+          isLeaving={pendingRemovalItemIds.includes(message.id)}
           onAnimationEnd={handleAnimationEnd}
         />
       ))}

@@ -36,7 +36,7 @@ export function ContactsList({
           </div>
 
           <div className="actions">
-            <Link href={`/edit/${contact.id}`}>
+            <Link to={`/edit/${contact.id}`}>
               <img src={edit} alt="Edit" />
             </Link>
             <button type="button" onClick={() => onDeleteContact(contact)}>

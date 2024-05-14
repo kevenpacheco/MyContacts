@@ -31,23 +31,15 @@ export function Home() {
     searchTerm,
   } = useHome();
 
+  const hasContacts = contacts.length > 0;
+  const isListEmpty = !hasError && !hasContacts && !isLoading;
+  const isSearchEmpty = !hasError && hasContacts && filteredContacts.length < 1;
+
   return (
     <Container>
       <Loader isLoading={isLoading} />
 
-      <Modal
-        title={`Tem certeza que deseja remover o contato "${contactBeingDeleted?.name}"?`}
-        danger
-        visible={isDeleteModalVisible}
-        isLoading={isLoadingDelete}
-        confirmLabel="Deletar"
-        onCancel={handleCloseDeleteModal}
-        onConfirm={handleConfirmDeleteContact}
-      >
-        <p>Esta ação não poderá ser desfeita!</p>
-      </Modal>
-
-      {contacts.length > 0 && (
+      {hasContacts && (
         <InputSearch value={searchTerm} onChange={handleChangeSearchTerm} />
       )}
 
@@ -58,21 +50,29 @@ export function Home() {
       />
 
       {hasError && <ErrorStatus onTryAgain={handleTryAgain} />}
+      {isListEmpty && <EmptyList />}
+      {isSearchEmpty && <SearchNotFound searchTerm={searchTerm} />}
 
       {!hasError && (
         <>
-          {contacts.length < 1 && !isLoading && <EmptyList />}
-
-          {contacts.length > 0 && filteredContacts.length < 1 && (
-            <SearchNotFound searchTerm={searchTerm} />
-          )}
-
           <ContactsList
             filteredContacts={filteredContacts}
             onDeleteContact={handleDeleteContact}
             onToggleOrderBy={handleToggleOrderBy}
             orderBy={orderBy}
           />
+
+          <Modal
+            title={`Tem certeza que deseja remover o contato "${contactBeingDeleted?.name}"?`}
+            danger
+            visible={isDeleteModalVisible}
+            isLoading={isLoadingDelete}
+            confirmLabel="Deletar"
+            onCancel={handleCloseDeleteModal}
+            onConfirm={handleConfirmDeleteContact}
+          >
+            <p>Esta ação não poderá ser desfeita!</p>
+          </Modal>
         </>
       )}
     </Container>

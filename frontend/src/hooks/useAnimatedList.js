@@ -9,25 +9,47 @@ export function useAnimatedList(initialValue = []) {
   const animatedRefs = useRef(new Map());
   const animationEndListeners = useRef(new Map());
 
-  const handleAnimationEnd = useCallback((id) => {
-    setItems((prevState) => prevState.filter((item) => item.id !== id));
-    setPendingRemovalItemIds((prevState) => prevState.filter((itemId) => itemId !== id));
+  const handleAnimationEnd = useCallback((itemId) => {
+    const removeListener = animationEndListeners.current.get(itemId);
+    removeListener();
+
+    animatedRefs.current.delete(itemId);
+    animationEndListeners.current.delete(itemId);
+
+    setItems((prevState) => prevState.filter((item) => item.id !== itemId));
+    setPendingRemovalItemIds((prevState) => prevState.filter((id) => itemId !== id));
   }, []);
 
   useEffect(() => {
+    const removeListeners = animationEndListeners.current;
+
     pendingRemovalItemIds.forEach((itemId) => {
       const animatedRef = animatedRefs.current.get(itemId);
-      const alreadyHasListener = animationEndListeners.current.has(itemId);
+      const alreadyHasListener = removeListeners.has(itemId);
 
       if (animatedRef?.current && !alreadyHasListener) {
-        animationEndListeners.current.set(itemId, true);
+        const onAnimationEnd = () => handleAnimationEnd(itemId);
+        const removeListener = () => {
+          animatedRef.current.removeEventListener(
+            'animationend',
+            onAnimationEnd,
+          );
+        };
 
-        animatedRef.current.addEventListener('animationend', () => {
-          handleAnimationEnd(itemId);
-        });
+        removeListeners.set(itemId, removeListener);
+
+        animatedRef.current.addEventListener('animationend', onAnimationEnd);
       }
     });
   }, [pendingRemovalItemIds, handleAnimationEnd]);
+
+  useEffect(() => {
+    const removeListeners = animationEndListeners.current;
+
+    return () => {
+      removeListeners.forEach((removeListener) => removeListener());
+    };
+  }, []);
 
   const handleRemoveMessage = useCallback((id) => {
     setPendingRemovalItemIds((prevState) => [...prevState, id]);
@@ -45,14 +67,12 @@ export function useAnimatedList(initialValue = []) {
   }, []);
 
   const renderList = useCallback(
-    (renderItem) => items.map(
-      (item) => {
-        const isLeaving = pendingRemovalItemIds.includes(item.id);
-        const animatedRef = getAnimatedRef(item.id);
+    (renderItem) => items.map((item) => {
+      const isLeaving = pendingRemovalItemIds.includes(item.id);
+      const animatedRef = getAnimatedRef(item.id);
 
-        return renderItem(item, { isLeaving, animatedRef });
-      },
-    ),
+      return renderItem(item, { isLeaving, animatedRef });
+    }),
     [items, pendingRemovalItemIds, getAnimatedRef],
   );
 

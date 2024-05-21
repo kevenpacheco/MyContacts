@@ -1,6 +1,9 @@
 import {
-  useCallback, useEffect, useState,
-  useTransition,
+  useCallback,
+  useEffect,
+  useState,
+  useDeferredValue,
+  useMemo,
 } from 'react';
 
 import toast from '../../utils/toast';
@@ -9,22 +12,20 @@ import ContactsService from '../../services/ContactsService';
 export function useHome() {
   const [contacts, setContacts] = useState([]);
   const [orderBy, setOrderBy] = useState('asc');
-  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [contactBeingDeleted, setContactBeingDeleted] = useState(null);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
-  const [filteredContacts, setFilteredContacts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const deferredSearchTerm = useDeferredValue(searchTerm);
 
-  const [isPending, setIsPending] = useTransition();
-
-  // const filteredContacts = useMemo(
-  //   () => contacts.filter(
-  //     (contact) => contact.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  //   ),
-  //   [contacts, searchTerm],
-  // );
+  const filteredContacts = useMemo(
+    () => contacts.filter(
+      (contact) => contact.name.toLowerCase().includes(deferredSearchTerm.toLowerCase()),
+    ),
+    [contacts, deferredSearchTerm],
+  );
 
   const loadContacts = useCallback(async () => {
     try {
@@ -34,7 +35,6 @@ export function useHome() {
 
       setHasError(false);
       setContacts(contactsList);
-      setFilteredContacts(contactsList);
     } catch {
       setHasError(true);
       setContacts([]);
@@ -55,14 +55,6 @@ export function useHome() {
     const { value } = event.target;
 
     setSearchTerm(value);
-
-    setIsPending(() => {
-      setFilteredContacts(
-        () => contacts.filter(
-          (contact) => contact.name.toLowerCase().includes(value.toLowerCase()),
-        ),
-      );
-    });
   }
 
   function handleTryAgain() {
@@ -105,7 +97,6 @@ export function useHome() {
   }
 
   return {
-    isPending,
     contacts,
     isLoading,
     hasError,

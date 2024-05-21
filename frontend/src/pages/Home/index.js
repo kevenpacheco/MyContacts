@@ -14,7 +14,6 @@ import { ContactsList } from './components/ContactsList';
 
 export function Home() {
   const {
-    isPending,
     contacts,
     contactBeingDeleted,
     filteredContacts,
@@ -56,8 +55,6 @@ export function Home() {
 
       {!hasError && (
         <>
-          {isPending && <h1>Carregando...</h1>}
-
           <ContactsList
             filteredContacts={filteredContacts}
             onDeleteContact={handleDeleteContact}

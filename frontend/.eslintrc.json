@@ -17,6 +17,7 @@
   },
   "plugins": ["react", "react-hooks"],
   "rules": {
+    "react/require-default-props": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/react-in-jsx-scope": "off",
     "react/jsx-no-bind": "off",

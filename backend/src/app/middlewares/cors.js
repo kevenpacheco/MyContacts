@@ -1,7 +1,7 @@
 module.exports = (request, response, next) => {
   const allowedCors = ["http://localhost:3000"];
 
-  const origin = request.headers("origin");
+  const origin = request.header("origin");
   const isAllowed = allowedCors.includes(origin);
 
   if (isAllowed) {
